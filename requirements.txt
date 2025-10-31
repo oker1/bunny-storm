@@ -8,9 +8,9 @@ coverage>=4.5.4
 Sphinx>=1.8.5
 twine>=1.14.0
 
-pytest>=4.6.5
-pytest-asyncio>=0.15.1
-pytest-runner>=5.1
+pytest>=4.6.5,<6
+pytest-asyncio==0.15.1
+pytest-runner>=5.1,<6
 
 aiohttp>=3.7.4.post0
 setuptools>=57.2.0

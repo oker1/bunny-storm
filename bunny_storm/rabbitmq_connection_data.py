@@ -14,6 +14,8 @@ class RabbitMQConnectionData:
     port: int = 5672
     virtual_host: str = "/"
     connection_name: str = ""
+    scheme: str = "amqp"
+    ssl_options: dict = None
 
     def uri(self) -> str:
         """
@@ -21,5 +23,15 @@ class RabbitMQConnectionData:
         :return: Connection URI
         """
         vhost = "" if self.virtual_host == "/" else self.virtual_host
-        name_query = f"?name={self.connection_name}" if self.connection_name else ""
-        return f"amqp://{self.username}:{self.password}@{self.host}:{self.port}/{vhost}{name_query}"
+
+        query = ""
+        query_list = []
+        if self.connection_name:
+            query_list.append(f"name={self.connection_name}")
+        if self.ssl_options:
+            for option, value in self.ssl_options.items():
+                query_list.append(f"{option}={value}")
+        if query_list:
+            query = "?" + "&".join(query_list)
+
+        return f"{self.scheme}://{self.username}:{self.password}@{self.host}:{self.port}/{vhost}{query}"

@@ -34,6 +34,11 @@ def rabbitmq_port() -> int:
 
 
 @pytest.fixture(scope="session")
+def rabbitmq_ssl_port() -> int:
+    return int(os.getenv("RABBITMQ_SSL_PORT", "5671"))
+
+
+@pytest.fixture(scope="session")
 def rabbitmq_virtual_host() -> str:
     return os.getenv("RABBITMQ_VIRTUAL_HOST", "vhost")
 
@@ -47,6 +52,19 @@ def rabbitmq_connection_data(rabbitmq_user: str, rabbitmq_password: str, rabbitm
                                              port=rabbitmq_port,
                                              virtual_host=rabbitmq_virtual_host,
                                              connection_name="test_runner")
+    return connection_data
+
+@pytest.fixture(scope="function")
+def rabbitmq_ssl_connection_data(rabbitmq_user: str, rabbitmq_password: str, rabbitmq_host: str, rabbitmq_ssl_port: int,
+                             rabbitmq_virtual_host: str) -> RabbitMQConnectionData:
+    connection_data = RabbitMQConnectionData(username=rabbitmq_user,
+                                             password=rabbitmq_password,
+                                             host=rabbitmq_host,
+                                             port=rabbitmq_ssl_port,
+                                             scheme="amqps",
+                                             ssl_options={"no_verify_ssl": "1"},
+                                             virtual_host=rabbitmq_virtual_host,
+                                             connection_name="test_runner_ssl")
     return connection_data
 
 

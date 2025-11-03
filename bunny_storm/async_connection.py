@@ -105,10 +105,12 @@ class AsyncConnection:
                 connection = await connect_robust(url=uri,
                                                   loop=self._loop,
                                                   timeout=self._timeout,
-                                                  client_properties=self._properties)
+                                                  client_properties=self._properties,
+                                                  ssl=self._rabbitmq_connection_data.scheme == "amqps",
+                                                  ssl_options=self._rabbitmq_connection_data.ssl_options)
                 return connection
             except (asyncio.TimeoutError, ConnectionError):
-                self.logger.error(f"Connection attempt {attempt_num} / {self._connection_attempts} failed")
+                self.logger.error(f"Connection attempt {attempt_num} / {self._connection_attempts} failed", exc_info=1)
                 if attempt_num < self._connection_attempts:
                     self.logger.debug(f"Going to sleep for {self._attempt_backoff} seconds")
                     await asyncio.sleep(self._attempt_backoff)

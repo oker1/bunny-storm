@@ -20,6 +20,18 @@ async def test_async_connection_get_connection(event_loop: asyncio.AbstractEvent
     # Assert
     assert isinstance(connection, RobustConnection) and async_connection.is_connected()
 
+@pytest.mark.asyncio
+async def test_async_connection_get_ssl_connection(event_loop: asyncio.AbstractEventLoop,
+                                               logger: logging.Logger,
+                                               rabbitmq_ssl_connection_data: RabbitMQConnectionData) -> None:
+    # Arrange
+    async_connection = AsyncConnection(rabbitmq_ssl_connection_data, logger, event_loop)
+
+    # Act
+    connection = await async_connection.get_connection()
+
+    # Assert
+    assert isinstance(connection, RobustConnection) and async_connection.is_connected()
 
 @pytest.mark.asyncio
 async def test_async_connection_connection_failure(event_loop: asyncio.AbstractEventLoop,
